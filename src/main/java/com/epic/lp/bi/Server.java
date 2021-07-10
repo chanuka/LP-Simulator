@@ -7,6 +7,8 @@ package com.epic.lp.bi;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
@@ -20,8 +22,8 @@ import java.util.logging.Logger;
  */
 public class Server implements Runnable {
 
-    private static ObjectOutputStream toClient;
-    private static ObjectInputStream fromClient;
+    private static DataOutputStream toClient;
+    private static DataInputStream fromClient;
     private static Socket socket;
     private static final int SERVERPORT = 4020;
     private static ServerSocket serverSocket;
@@ -34,8 +36,8 @@ public class Server implements Runnable {
             socket = serverSocket.accept();
             System.out.println("Just connected to " + socket.getRemoteSocketAddress());
 
-            toClient = new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()));
-            fromClient = new ObjectInputStream(new BufferedInputStream(socket.getInputStream()));
+            toClient = new DataOutputStream(new BufferedOutputStream(socket.getOutputStream()));
+            fromClient = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 //            Message msgRequest;
 //            while ((msgRequest= (Message) fromClient.readObject()) != null) {
 //                int number = msgRequest.number;
@@ -48,8 +50,8 @@ public class Server implements Runnable {
         }
     }
 
-    public static void send(int number) throws Exception {
-        toClient.writeObject(new Message(number * number));
+    public static void send(byte [] message) throws Exception {
+        toClient.write(message);
         toClient.flush();
     }
 
